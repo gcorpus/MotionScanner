@@ -2,6 +2,10 @@ MotionScannerController {
     border: 1px solid rgb(39, 38, 38);
     background: #cfa8af;
 }
-/* ScannerParametersController._avatar_group{
-    background-image:url('../Lib/human_figure_24.jpg');
-} */
+BodyButton{
+    background: transparent;
+}
+
+ScannerParametersController{
+    background: #333533;
+}
