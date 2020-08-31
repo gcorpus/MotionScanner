@@ -1,6 +1,6 @@
 from PySide2.QtWidgets import *
 import cv2
-
+import numpy
 
 class MotionScannerLib(object):
 
@@ -20,9 +20,10 @@ class MotionScannerLib(object):
 
             key = cv2.waitKey(1)
 
-            if key == 27:
+            if key == 27 or canvas_combobox.currentIndex() != 4:
                 break
 
         capture.release()
         cv2.destroyAllWindows()
 
+        canvas_combobox.setCurrentIndex(0)

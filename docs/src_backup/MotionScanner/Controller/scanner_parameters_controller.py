@@ -1,14 +1,14 @@
 from PySide2.QtWidgets import *
 from PySide2.QtGui import *
-from MotionScanner.Controller import BodyButton
+from .body_button import BodyButton
 
 
 class ScannerParametersController(QWidget):
 
-    def __init__(self, parent=None):
-        super(ScannerParametersController, self).__init__(parent)
+    def __init__(self, parent=None):         
+        super(ScannerParametersController, self).__init__(parent)  
         self.SetupUI()
-        self.setStyleSheet(open('D:/Greek/Documentos/GreekosoLab/MotionScanner/src/MotionScanner/Lib/stylesheet.css').read())
+        self.setStyleSheet(open('../Lib/stylesheet.css').read())
 
 
     def SetupUI(self):
@@ -51,7 +51,7 @@ class ScannerParametersController(QWidget):
         self._avatar_layout = QVBoxLayout()
         self._avatar_group = QGroupBox()
         self.resizeWidget(self._avatar_group,300,600)
-        self._avatar_group.setStyleSheet("""background-image: url(D:/Greek/Documentos/GreekosoLab/MotionScanner/src/MotionScanner/Lib/Images/human_figure_36.jpg)""")
+        self._avatar_group.setStyleSheet("""background-image: url(../Lib/Images/human_figure_36.jpg)""")
 
         self._avatar_vertical_layout = QVBoxLayout()
 
@@ -168,12 +168,12 @@ class ScannerParametersController(QWidget):
 
 if __name__ == '__main__':
     import sys
-    app = QApplication(sys.argv)
-    # Create babel
-    controller = ScannerParametersController()
+    app = QApplication(sys.argv)     
+    # Create babel  
+    controller = ScannerParametersController()  
     # setup stylesheet
     # app.setStyleSheet(open('../Lib/stylesheet.css').read())
     #Show babel
-    controller.show()
-    # Run the main Qt loop
+    controller.show()     
+    # Run the main Qt loop     
     sys.exit(app.exec_())

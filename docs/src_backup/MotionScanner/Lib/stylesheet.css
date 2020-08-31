@@ -1,0 +1,18 @@
+MotionScannerController {
+    border: 1px solid rgb(39, 38, 38);
+    /* background: #cfa8af; */
+    background: #463959;
+}
+BodyButton{
+    background: transparent;
+}
+
+ScannerParametersController{
+    background: #333533;
+}
+
+DataWidget{
+    color: black;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 20px;
+}
