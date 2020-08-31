@@ -1,6 +1,6 @@
 from PySide2.QtWidgets import *
 from PySide2.QtGui import *
-from body_button import BodyButton
+from .body_button import BodyButton
 
 
 class ScannerParametersController(QWidget):
@@ -18,7 +18,8 @@ class ScannerParametersController(QWidget):
 
         self._controls_group = QGroupBox()
         self.resizeWidget(self._controls_group,350,600)
-        self._controls_group.setStyleSheet("""background: #757575;""")
+        # self._controls_group.setStyleSheet("""background: #757575;""")
+        self._controls_group.setStyleSheet("""background: #907BA6;""")
         self._main_controls_layout = QVBoxLayout()
 
         width = 300
