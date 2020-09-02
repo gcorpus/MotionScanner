@@ -1,4 +1,3 @@
-from PySide2.QtWidgets import *
 import cv2
 
 
@@ -15,7 +14,7 @@ class MotionScannerLib(object):
             success, frame = capture.read()
             frame = cv2.flip(frame, 1)
 
-            cv2.imshow('Webcam Canvas', frame)
+            cv2.imshow('Real-time Scanner', frame)
             print(frame.shape)
 
             key = cv2.waitKey(1)

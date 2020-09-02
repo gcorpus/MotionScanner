@@ -2,14 +2,14 @@ from PySide2.QtWidgets import *
 
 
 class DataWidget(QHBoxLayout):
-    def __init__(self, parent=None, name='' , data=''):
+    def __init__(self, parent=None, name='', data=''):
         super(DataWidget, self).__init__(parent)
         self._name = name
         self._data = data
 
-        self.SetupUI()
+        self.setupUI()
 
-    def SetupUI(self):
+    def setupUI(self):
 
         self._name_label = QLabel('{}: '.format(self._name))
         self._data_label = QLabel('{}'.format(self._data))
@@ -18,7 +18,8 @@ class DataWidget(QHBoxLayout):
         self.addWidget(self._data_label)
         self.addStretch()
 
-        self._name_label.setStyleSheet("""font-weight: bold;""")
+        self._name_label.setStyleSheet("""font-weight: bold;font-family:Helvetica;font-size:12px;""")
+        self._data_label.setStyleSheet("""font-family:Helvetica;font-size:16px;""")
 
 
 if __name__ == '__main__':

@@ -11,7 +11,7 @@ class UserProfileController(QWidget):
         super(UserProfileController, self).__init__(parent)
         self._id = user['_id']
         self._username = user['name']
-        self._heigth = user['heigth']
+        self._height = user['heigth']
         self._weight = user['weight']
         self._roles = user['roles']
         self._disciplines = user['disciplines']
@@ -21,43 +21,44 @@ class UserProfileController(QWidget):
 
     def SetupUI(self):
         self.setWindowTitle("User profile")
-        self.resize(500, 150)
 
         self._main_layout = QVBoxLayout(self)
-        self._sub_main_layout = QHBoxLayout()
 
-        self._data_group = QGroupBox()
-        self._data_layout = QVBoxLayout()
+        self._image_data_layout = QHBoxLayout()
 
-        image = cv2.imread('D:/Greek/Documentos/GreekosoLab/MotionScanner/src/MotionScanner/Lib/Images/profile_image.jpg')
-        image = imutils.resize(image, width=150)
-        cv2.imwrite('D:/Greek/Documentos/GreekosoLab/MotionScanner/src/MotionScanner/Lib/Images/profile_image_resize.jpg', image)
+        # Create image item
+        image = QPixmap('D:/Greek/Documentos/GreekosoLab/MotionScanner/src/MotionScanner/Lib/Images/profile_image_resize.jpg')
+        self._profile_image = QLabel()
+        self._profile_image.setPixmap(image)
 
-        self._profile_image = QPixmap('D:/Greek/Documentos/GreekosoLab/MotionScanner/src/MotionScanner/Lib/Images/profile_image_resize.jpg')
-        self._label_image = QLabel()
-        self._label_image.setPixmap(self._profile_image)
+        self._image_data_layout.addWidget(self._profile_image)
 
         self._user_data = DataWidget(name='Username', data=self._username)
-        self._heigth_data = DataWidget(name='Heigth', data=self._heigth)
+        self._height_data = DataWidget(name='Height', data=self._height)
         self._weight_data = DataWidget(name='Weight', data=self._weight)
+
+        self._data_one_group = QGroupBox()
+        self._data_one_layout = QVBoxLayout()
+        self._data_one_layout.addLayout(self._user_data)
+        self._data_one_layout.addLayout(self._height_data)
+        self._data_one_layout.addLayout(self._weight_data)
+        self._data_one_group.setLayout(self._data_one_layout)
+
+        self._image_data_layout.addWidget(self._data_one_group)
+
         self._role_data = DataWidget(name='Role', data=self._roles)
         self._discipline_data = DataWidget(name='Disciplines', data=self._disciplines)
         self._routine_data = DataWidget(name='Routines', data=self._routines)
 
-        self._data_layout.addLayout(self._user_data)
-        self._data_layout.addLayout(self._heigth_data)
-        self._data_layout.addLayout(self._weight_data)
-        self._data_layout.addLayout(self._role_data)
-        self._data_layout.addLayout(self._discipline_data)
-        self._data_layout.addLayout(self._routine_data)
+        self._data_second_group = QGroupBox()
+        self._data_second_layout = QVBoxLayout()
+        self._data_second_layout.addLayout(self._role_data)
+        self._data_second_layout.addLayout(self._discipline_data)
+        self._data_second_layout.addLayout(self._routine_data)
+        self._data_second_group.setLayout(self._data_second_layout)
 
-        self._data_group.setLayout(self._data_layout)
-        self.setStyleSheet("""background-color:#907BA6;font-family:Tahoma;font-size: 14px;""")
-
-        self._sub_main_layout.addWidget(self._label_image)
-        self._sub_main_layout.addWidget(self._data_group)
-
-        self._main_layout.addLayout(self._sub_main_layout)
+        self._main_layout.addLayout(self._image_data_layout)
+        self._main_layout.addWidget(self._data_second_group)
 
 
 if __name__ == '__main__':
@@ -74,3 +75,6 @@ if __name__ == '__main__':
     controller.show()
     # Run the main Qt loop
     sys.exit(app.exec_())
+
+    # self._data_group.setLayout(self._data_layout)
+    # self.setStyleSheet("""background-color:#907BA6;font-family:Tahoma;font-size: 16px;""")

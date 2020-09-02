@@ -1,12 +1,13 @@
 from PySide2.QtWidgets import *
 from PySide2.QtGui import *
+# from MotionScanner.Controller import BodyButton
 from MotionScanner.Controller import BodyButton
 
 
-class ScannerParametersController(QWidget):
+class AvatarController(QWidget):
 
     def __init__(self, parent=None):
-        super(ScannerParametersController, self).__init__(parent)
+        super(AvatarController, self).__init__(parent)
         self.SetupUI()
         self.setStyleSheet(open('D:/Greek/Documentos/GreekosoLab/MotionScanner/src/MotionScanner/Lib/stylesheet.css').read())
 
@@ -17,7 +18,7 @@ class ScannerParametersController(QWidget):
         self._controls_layout = QHBoxLayout()
 
         self._controls_group = QGroupBox()
-        self.resizeWidget(self._controls_group,350,600)
+        self.resizeWidget(self._controls_group,300,600)
         # self._controls_group.setStyleSheet("""background: #757575;""")
         self._controls_group.setStyleSheet("""background: #907BA6;""")
         self._main_controls_layout = QVBoxLayout()
@@ -153,7 +154,9 @@ class ScannerParametersController(QWidget):
         self._avatar_group.setLayout(self._avatar_vertical_layout)
         self._avatar_layout.addWidget(self._avatar_group)
 
-        self._controls_layout.addWidget(self._controls_group)
+        # self._controls_layout.addWidget(self._controls_group)
+
+
         self._controls_layout.addLayout(self._avatar_layout)
 
         self._main_layout.addLayout(self._title_layout)

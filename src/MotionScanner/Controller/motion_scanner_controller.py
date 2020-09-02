@@ -1,80 +1,115 @@
 from PySide2.QtWidgets import *
-from PySide2.QtGui import *
-from MotionScanner.Controller import ScannerParametersController
-from MotionScanner.Controller import UserProfileController
-from MotionScanner.Lib import MotionScannerLib
+from MotionScanner.Controller import AvatarController, UserProfileController, WebCamController, MeasurementMenuController, \
+    ColorSetterController
 
 
-class MotionScannerController(QDialog):
+class MotionScannerController(QWidget):
 
     def __init__(self, parent=None):
         super(MotionScannerController, self).__init__(parent)
-        self.SetupUI()
+        self._setupUI()
         self.Initialize()
-        # self._dialog.show()
 
-    def SetupUI(self):
+    def _setupUI(self):
         self.setWindowTitle("Motion Scanner")
-        self.resizeWidget(self, 760, 940)
 
         self._main_layout = QVBoxLayout(self)
-        self._dialog = QMainWindow()
 
-        # self._scanner_controls_dock = QDockWidget()
+        # Building menu
+        menu_layout = QHBoxLayout()
 
-        self._scanner_controls_layout = QVBoxLayout()
+        menu_bar = QMenuBar(self)
+        settings_menu = menu_bar.addMenu('Settings')
+        help_menu = menu_bar.addMenu('Help')
 
-        self._scanner_controls_group = QGroupBox()
-        # self.resizeWidget(self._scanner_controls_group,640,640)
+        action_markers = QAction('Color setter', self)
+        action_markers.setShortcut('Ctrl+T')
+        action_markers.triggered.connect(self._CallColorSetter)
 
-        self._scanner_controls_widget = ScannerParametersController()
+        action_exit = QAction('Exit', self)
+        action_exit.setShortcut('Ctrl+E')
+        action_exit.triggered.connect(self._CallExit)
+
+        action_manual = QAction('Manual',self)
+        action_manual.setShortcut('Ctrl+N')
+        action_manual.triggered.connect(self._CallManual)
+
+        action_about = QAction('About', self)
+        action_about.setShortcut('Ctrl+A')
+        action_about.triggered.connect(self._CallAbout)
+
+        settings_menu.addAction(action_markers)
+        settings_menu.addAction(action_exit)
+
+        help_menu.addAction(action_manual)
+        help_menu.addAction(action_about)
+
+        menu_layout.addWidget(menu_bar)
+
+        # Create layout of main components | HORIZONTAL
+        self._content_layout = QHBoxLayout()
+
+        self._real_time_scanner_group = QGroupBox()
+        self._real_time_scanner_layout = QVBoxLayout()
+
+        self._measurement_control_widget = MeasurementMenuController()
+        self._real_time_scanner_widget = WebCamController(width=1280, height=720)
+
+        self._real_time_scanner_layout.addWidget(self._measurement_control_widget)
+        self._real_time_scanner_layout.addWidget(self._real_time_scanner_widget)
+        self._real_time_scanner_layout.addStretch()
+
+        self._real_time_scanner_group.setLayout(self._real_time_scanner_layout)
+
+        self._content_layout.addWidget(self._real_time_scanner_group)
+
+        # Create layout of data-controls | VERTICAL
+        self._data_controls_layout = QVBoxLayout()
+
         self._user_profile_widget = UserProfileController(
-            user={'_id': '2323943', 'name': 'Oso Blanco', 'heigth': '100 cm', 'weight': '10 kg',
+            user={'_id': '2323943', 'name': 'Greek', 'heigth': '1.61 m', 'weight': '61 kg',
                   'roles': ['Dancer, Coach'], 'disciplines': ['Ballet', 'Fitness'], 'routines': ['Swan']})
 
-        self._button_layout = QHBoxLayout()
-        self._scanner_video_button = QPushButton('Scanner Video')
-        self._scanner_video_button.setFixedSize(660, 70)
-        self._scanner_video_button.setStyleSheet("""background-color:#907BA6;font-size: 20px;font-weight: bold;""")
+        self._avatar_controls_widget = AvatarController()
 
-        self._button_layout.addStretch()
-        self._button_layout.addWidget(self._scanner_video_button)
-        self._button_layout.addStretch()
+        self._play_scan_button = QPushButton('Scanning')
+        self._play_scan_button.setStyleSheet("""font-family:Helvetica;font-size:16px;""")
+        self._play_scan_button.setMinimumHeight(40)
 
-        self._scanner_controls_layout.addWidget(self._user_profile_widget)
-        self._scanner_controls_layout.addWidget(self._scanner_controls_widget)
-        self._scanner_controls_layout.addLayout(self._button_layout)
-        self._scanner_controls_layout.addStretch()
+        self._data_controls_layout.addWidget(self._user_profile_widget)
+        self._data_controls_layout.addWidget(self._play_scan_button)
+        self._data_controls_layout.addWidget(self._avatar_controls_widget)
+        self._data_controls_layout.addStretch()
 
-        self._scanner_controls_group.setLayout(self._scanner_controls_layout)
+        self._content_layout.addLayout(self._data_controls_layout)
 
-        # self._scanner_controls_dock.setWidget(self._scanner_controls_group)
-        # self._scanner_controls_dock.setFloating(False)
-
-        # self._aux = QLabel('hfhdbfhdf')
-
-        # self._dialog.setCentralWidget(self._aux)
-        # self._dialog.addDockWidget(Qt.RightDockWidgetArea, self._scanner_controls_dock)
-
-        self._main_layout.addWidget(self._scanner_controls_group)
+        self._main_layout.addLayout(menu_layout)
+        self._main_layout.addLayout(self._content_layout)
 
     def Initialize(self):
-        self._scanner_video_button.clicked.connect(MotionScannerLib.GetRealTimeWebCamVideo)
+        self._play_scan_button.clicked.connect(lambda: self._real_time_scanner_widget.StartVideoScanner(type_='RGB'))
 
-    def resizeWidget(self, widget, width, height):
-        widget.setMinimumSize(width, height)
-        widget.setMaximumSize(width, height)
+    def _CallColorSetter(self):
+        self._real_time_scanner_widget.StopVideoStream()
+        _dialog = ColorSetterController()
+        _dialog.Show()
+
+    def _CallExit(self):
+        self.close()
+
+    def _CallManual(self):
+        pass
+
+    def _CallAbout(self):
+        pass
 
 
 if __name__ == '__main__':
+
     import sys
 
     app = QApplication(sys.argv)
-    # Create babel
     controller = MotionScannerController()
-    # setup stylesheet
-    app.setStyleSheet(open('../Lib/stylesheet.css').read())
-    # Show babel
+    # app.setStyleSheet(open('../Lib/stylesheet.css').read())
     controller.show()
-    # Run the main Qt loop
     sys.exit(app.exec_())
