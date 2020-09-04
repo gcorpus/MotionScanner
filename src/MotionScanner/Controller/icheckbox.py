@@ -8,6 +8,10 @@ class ICheckbox(QWidget):
         self.setupUI()
         self.initialize()
 
+    @property
+    def isActived(self):
+        return self._checkbox.isChecked()
+
     def setupUI(self):
         self._layout = QHBoxLayout(self)
 

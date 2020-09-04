@@ -7,9 +7,37 @@ class MeasurementMenuController(QWidget):
 
     def __init__(self, parent=None):
         super(MeasurementMenuController, self).__init__(parent)
-        self.setupUI()
+        self._setupUI()
 
-    def setupUI(self):
+    @property
+    def isLength(self):
+        return self._length_checkbox.isActived
+
+    @property
+    def isAngle(self):
+        return self._angle_checkbox.isActived
+
+    @property
+    def isSpeed(self):
+        return self._speed_checkbox.isActived
+
+    @property
+    def isMotionPath(self):
+        return self._motion_path_checkbox.isActived
+
+    @property
+    def isMetadata(self):
+        return self._metadata_checkbox.isActived
+
+    @property
+    def isPerformance(self):
+        return self._performance_checkbox.isActived
+
+    @property
+    def isAudioStep(self):
+        return self._audio_step_checkbox
+
+    def _setupUI(self):
         self._main_layout = QVBoxLayout(self)
 
         self._measurement_menu_group = QGroupBox('Measurement Parameters')

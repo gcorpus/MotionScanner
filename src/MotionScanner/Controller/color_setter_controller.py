@@ -5,15 +5,14 @@ import cv2
 import numpy
 from MotionScanner.Controller import WebCamController
 from MotionScanner.Controller import SliderControlWidget
-# from web_cam_controller import WebCamController
-# from slider_control_widget import SliderControlWidget
 
 
 
 class ColorSetterController(QDialog):
 
-    def __init__(self, parent=None):
+    def __init__(self, motion_scanner_controller,parent=None):
         super(ColorSetterController, self).__init__(parent)
+        self._motion_scanner_controller = motion_scanner_controller
         self._setupUI()
         self._initialize()
 
@@ -26,7 +25,7 @@ class ColorSetterController(QDialog):
         self._video_canvas_group = QGroupBox('Canvas in binary')
         self._video_canvas_group.setStyleSheet("""font-family:Helvetica;font-size:16px;""")
         self._video_canvas_layout = QVBoxLayout()
-        self._video_canvas_widget = WebCamController(width=640, height=480)
+        self._video_canvas_widget = WebCamController(type_='BINARY', width=640, height=480)
         self._video_canvas_layout.addWidget(self._video_canvas_widget)
         self._video_canvas_group.setLayout(self._video_canvas_layout)
 
@@ -55,13 +54,31 @@ class ColorSetterController(QDialog):
         self._main_layout.addLayout(self._content_layout)
 
     def _initialize(self):
-        self._video_canvas_widget.StartVideoScanner(type_='BINARY',
-                                                    hue=self._hue_widget,
-                                                    saturation=self._saturation_widget,
-                                                    value=self._value_widget)
+        self._video_canvas_widget.startVideoScanner(hue_widget=self._hue_widget,
+                                                    saturation_widget=self._saturation_widget,
+                                                    value_widget=self._value_widget)
+
+        self._apply_button.clicked.connect(self._setHSVValues)
+
+    def _setHSVValues(self):
+        self._motion_scanner_controller.setLowHue(self._hue_widget.getLowValue())
+        self._motion_scanner_controller.setHighHue(self._hue_widget.getHighValue())
+        self._motion_scanner_controller.setLowSaturation(self._saturation_widget.getLowValue())
+        self._motion_scanner_controller.setHighSaturation(self._saturation_widget.getHighValue())
+        self._motion_scanner_controller.setLowValue(self._value_widget.getLowValue())
+        self._motion_scanner_controller.setHighValue(self._value_widget.getHighValue())
+
+        self.Close()
 
     def Show(self):
         self.exec_()
+
+    def Close(self):
+        self._video_canvas_widget.stopVideoStream()
+        self.close()
+
+    def closeEvent(self, event):
+        self._video_canvas_widget.stopVideoStream()
 
 
 if __name__ == "__main__":

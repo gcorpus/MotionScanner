@@ -8,48 +8,73 @@ class AvatarController(QWidget):
 
     def __init__(self, parent=None):
         super(AvatarController, self).__init__(parent)
-        self.SetupUI()
+        self._setupUI()
         self.setStyleSheet(open('D:/Greek/Documentos/GreekosoLab/MotionScanner/src/MotionScanner/Lib/stylesheet.css').read())
 
+    @property
+    def Head(self):
+        return self._head_button
 
-    def SetupUI(self):
+    @property
+    def LeftShoulder(self):
+        return self._left_shoulder_button
+
+    @property
+    def RightShouler(self):
+        return self._right_shoulder_button
+
+    @property
+    def Chest(self):
+        return self._chest_button
+
+    @property
+    def LeftElbow(self):
+        return self._left_elbow_button
+
+    @property
+    def RightElbow(self):
+        return self._right_elbow_button
+
+    @property
+    def LeftWrist(self):
+        return self._left_wrist_button
+
+    @property
+    def RightWrist(self):
+        return self._right_wrist_button
+
+    @property
+    def Center(self):
+        return self._center_button
+
+    @property
+    def LeftHip(self):
+        return self._left_hip_button
+
+    @property
+    def RightHip(self):
+        return self._right_hip_button
+
+    @property
+    def LeftKnee(self):
+        return self._left_knee_button
+
+    @property
+    def RightKnee(self):
+        return self._right_knee_button
+
+    @property
+    def LeftAnkle(self):
+        return self._left_ankle_button
+
+    @property
+    def RightAnkle(self):
+        return self._right_ankle_button
+
+    def _setupUI(self):
         self._main_layout = QVBoxLayout(self)
-        self._title_layout = QVBoxLayout()
-        self._controls_layout = QHBoxLayout()
-
-        self._controls_group = QGroupBox()
-        self.resizeWidget(self._controls_group,300,600)
-        # self._controls_group.setStyleSheet("""background: #757575;""")
-        self._controls_group.setStyleSheet("""background: #907BA6;""")
-        self._main_controls_layout = QVBoxLayout()
-
-        width = 300
-        height = 50
-
-        self._measurement_parameters = BodyButton(label='Measurement', width=width, height=height, isParameter=True)
-        self._length_parameter = BodyButton(label='Length', width=width, height=height, isParameter=True)
-        self._angle_parameter = BodyButton(label='Angles', width=width, height=height, isParameter=True)
-        self._speed_parameter = BodyButton(label='Speed', width=width, height=height, isParameter=True)
-        self._path_parameter = BodyButton(label='MotionPath', width=width, height=height, isParameter=True)
-        self._metadata_parameter = BodyButton(label='Metadata', width=width, height=height, isParameter=True)
-        self._performance_evaluation_parameter = BodyButton(label='Performance', width=width, height=height, isParameter=True)
-        self._audio_steps_parameter = BodyButton(label='AudioSteps', width=width, height=height, isParameter=True)
-        self._aux_button = BodyButton(label='', width=width, height=20, isParameter=True)
-
-        self._main_controls_layout.addWidget(self._measurement_parameters)
-        self._main_controls_layout.addWidget(self._aux_button)
-        self._main_controls_layout.addWidget(self._length_parameter)
-        self._main_controls_layout.addWidget(self._angle_parameter)
-        self._main_controls_layout.addWidget(self._speed_parameter)
-        self._main_controls_layout.addWidget(self._path_parameter)
-        self._main_controls_layout.addWidget(self._metadata_parameter)
-        self._main_controls_layout.addWidget(self._performance_evaluation_parameter)
-        self._main_controls_layout.addWidget(self._audio_steps_parameter)
-        self._main_controls_layout.addStretch()
-
-        self._controls_group.setLayout(self._main_controls_layout)
-
         self._avatar_layout = QVBoxLayout()
+
         self._avatar_group = QGroupBox()
         self.resizeWidget(self._avatar_group,300,600)
         self._avatar_group.setStyleSheet("""background-image: url(D:/Greek/Documentos/GreekosoLab/MotionScanner/src/MotionScanner/Lib/Images/human_figure_36.jpg)""")
@@ -67,11 +92,11 @@ class AvatarController(QWidget):
         self._sholuder_layout = QHBoxLayout()
         self._left_shoulder_button = BodyButton(width=45,height=45)
         self._chest_button = BodyButton(width=45,height=45)
-        self._right_shooulder_button = BodyButton(width=45,height=45)
+        self._right_shoulder_button = BodyButton(width=45,height=45)
         self._sholuder_layout.addStretch()
         self._sholuder_layout.addWidget(self._left_shoulder_button)
         self._sholuder_layout.addWidget(self._chest_button)
-        self._sholuder_layout.addWidget(self._right_shooulder_button)
+        self._sholuder_layout.addWidget(self._right_shoulder_button)
         self._sholuder_layout.addStretch()
 
         # ELBOWS
@@ -154,29 +179,18 @@ class AvatarController(QWidget):
         self._avatar_group.setLayout(self._avatar_vertical_layout)
         self._avatar_layout.addWidget(self._avatar_group)
 
-        # self._controls_layout.addWidget(self._controls_group)
+        self._main_layout.addLayout(self._avatar_layout)
 
-
-        self._controls_layout.addLayout(self._avatar_layout)
-
-        self._main_layout.addLayout(self._title_layout)
-        self._main_layout.addLayout(self._controls_layout)
-
-
-    def resizeWidget(self,widget,width,height):
-        widget.setMinimumSize(width,height)
-        widget.setMaximumSize(width,height)
-
+    def resizeWidget(self, widget, width, height):
+        widget.setMinimumSize(width, height)
+        widget.setMaximumSize(width, height)
 
 
 if __name__ == '__main__':
+
     import sys
+
     app = QApplication(sys.argv)
-    # Create babel
-    controller = ScannerParametersController()
-    # setup stylesheet
-    # app.setStyleSheet(open('../Lib/stylesheet.css').read())
-    #Show babel
+    controller = AvatarController()
     controller.show()
-    # Run the main Qt loop
     sys.exit(app.exec_())
