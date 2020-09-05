@@ -5,7 +5,8 @@ import cv2
 import numpy
 from MotionScanner.Controller import WebCamController
 from MotionScanner.Controller import SliderControlWidget
-
+# from web_cam_controller import WebCamController
+# from slider_control_widget import SliderControlWidget
 
 
 class ColorSetterController(QDialog):
@@ -61,12 +62,13 @@ class ColorSetterController(QDialog):
         self._apply_button.clicked.connect(self._setHSVValues)
 
     def _setHSVValues(self):
-        self._motion_scanner_controller.setLowHue(self._hue_widget.getLowValue())
-        self._motion_scanner_controller.setHighHue(self._hue_widget.getHighValue())
-        self._motion_scanner_controller.setLowSaturation(self._saturation_widget.getLowValue())
-        self._motion_scanner_controller.setHighSaturation(self._saturation_widget.getHighValue())
-        self._motion_scanner_controller.setLowValue(self._value_widget.getLowValue())
-        self._motion_scanner_controller.setHighValue(self._value_widget.getHighValue())
+        self._motion_scanner_controller.setColorLow(low_hue=self._hue_widget.getLowValue(),
+                                                    low_saturation=self._saturation_widget.getLowValue(),
+                                                    low_value=self._value_widget.getLowValue())
+
+        self._motion_scanner_controller.setColorHigh(high_hue=self._hue_widget.getHighValue(),
+                                                     high_saturation=self._saturation_widget.getHighValue(),
+                                                     high_value=self._value_widget.getHighValue())
 
         self.Close()
 

@@ -7,33 +7,18 @@ class MotionScannerController(QWidget):
 
     def __init__(self, parent=None):
         super(MotionScannerController, self).__init__(parent)
+
+        self._color_low = [0, 0, 0]
+        self._color_high = [179, 255, 255]
+
         self._setupUI()
         self.initialize()
 
-        self._low_hue = 0
-        self._high_hue = 179
-        self._low_saturation = 0
-        self._high_saturation = 255
-        self._low_value = 0
-        self._high_value = 255
+    def setColorLow(self, low_hue, low_saturation, low_value):
+        self._color_low = [low_hue, low_saturation, low_value]
 
-    def setLowHue(self, value):
-        self._low_hue = value
-
-    def setHighHue(self, value):
-        self._high_hue = value
-
-    def setLowSaturation(self, value):
-        self._low_saturation = value
-
-    def setHighSaturation(self, value):
-        self._high_saturation = value
-
-    def setLowValue(self, value):
-        self._low_value = value
-
-    def setHighValue(self, value):
-        self._high_value = value
+    def setColorHigh(self, high_hue, high_saturation, high_value):
+        self._color_high = [high_hue, high_saturation, high_value]
 
     def _setupUI(self):
         self.setWindowTitle("Motion Scanner")
@@ -78,7 +63,7 @@ class MotionScannerController(QWidget):
         self._real_time_scanner_layout = QVBoxLayout()
 
         self._measurement_widget = MeasurementMenuController()
-        self._real_time_scanner_widget = WebCamController(type_='COLOR_RANGE', width=1280, height=720)
+        self._real_time_scanner_widget = WebCamController(type_='COLOR_PATH', width=1280, height=720)
 
         self._real_time_scanner_layout.addWidget(self._measurement_widget)
         self._real_time_scanner_layout.addWidget(self._real_time_scanner_widget)
@@ -120,14 +105,19 @@ class MotionScannerController(QWidget):
         self._main_layout.addLayout(self._content_layout)
 
     def initialize(self):
-        self._play_scan_button.clicked.connect(lambda: self._real_time_scanner_widget.startVideoScanner(
-                                                low_hue=self._low_hue, high_hue=self._high_hue,
-                                                low_saturation=self._low_saturation, high_saturation=self._high_saturation,
-                                                low_value=self._low_value, high_value=self._high_value))
 
+        self._play_scan_button.clicked.connect(self._startVideoScanner)
         self._stop_scan_button.clicked.connect(lambda: self._real_time_scanner_widget.stopVideoStream())
         
         self._test_button.clicked.connect(self._test)
+
+    def _startVideoScanner(self):
+
+        self._real_time_scanner_widget.ColorLow = self._color_low
+        self._real_time_scanner_widget.ColorHigh = self._color_high
+        self._real_time_scanner_widget.MeasureWidget = self._measurement_widget
+        self._real_time_scanner_widget.AvatarWidget = self._avatar_widget
+        self._real_time_scanner_widget.startVideoScanner()
 
     def _callColorSetter(self):
         self._real_time_scanner_widget.stopVideoStream()

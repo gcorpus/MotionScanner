@@ -7,7 +7,6 @@ class BodyButton(QPushButton):
     def __init__(self, parent=None, label='', width=40, height=40, isActived=False):
         super(BodyButton, self).__init__(parent)
 
-        self.setText(label)
         self.setMinimumSize(width, height)
         self.setMaximumSize(width, height)
 
@@ -15,6 +14,7 @@ class BodyButton(QPushButton):
         self._not_active_icon = QIcon()
 
         self._isActived = isActived
+        self._body_part_name = label
 
         self.setStyleSheet(open('D:/Greek/Documentos/GreekosoLab/MotionScanner/src/MotionScanner/Lib/stylesheet.css').read())
 

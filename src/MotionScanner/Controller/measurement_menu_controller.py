@@ -65,14 +65,10 @@ class MeasurementMenuController(QWidget):
 
 
 if __name__ == '__main__':
+
     import sys
 
     app = QApplication(sys.argv)
-    # Create babel
     controller = MeasurementMenuController()
-    # setup stylesheet
-    # app.setStyleSheet(open('../Lib/stylesheet.css').read())
-    # Show babel
     controller.show()
-    # Run the main Qt loop
     sys.exit(app.exec_())

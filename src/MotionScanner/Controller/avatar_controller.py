@@ -1,6 +1,4 @@
 from PySide2.QtWidgets import *
-from PySide2.QtGui import *
-# from MotionScanner.Controller import BodyButton
 from MotionScanner.Controller import BodyButton
 
 
@@ -83,16 +81,16 @@ class AvatarController(QWidget):
 
         # HEAD
         self._head_layout = QHBoxLayout()
-        self._head_button = BodyButton(width=45,height=45)
+        self._head_button = BodyButton(label='Head', width=45, height=45)
         self._head_layout.addStretch()
         self._head_layout.addWidget(self._head_button)
         self._head_layout.addStretch()
 
         # SHOULDERS
         self._sholuder_layout = QHBoxLayout()
-        self._left_shoulder_button = BodyButton(width=45,height=45)
-        self._chest_button = BodyButton(width=45,height=45)
-        self._right_shoulder_button = BodyButton(width=45,height=45)
+        self._left_shoulder_button = BodyButton(label='Left shoulder', width=45, height=45)
+        self._chest_button = BodyButton(label='Chest', width=45, height=45)
+        self._right_shoulder_button = BodyButton(label='Right shoulder', width=45, height=45)
         self._sholuder_layout.addStretch()
         self._sholuder_layout.addWidget(self._left_shoulder_button)
         self._sholuder_layout.addWidget(self._chest_button)
@@ -101,8 +99,8 @@ class AvatarController(QWidget):
 
         # ELBOWS
         self._elbow_layout = QHBoxLayout()
-        self._left_elbow_button = BodyButton(width=50,height=50)
-        self._right_elbow_button = BodyButton(width=50,height=50)
+        self._left_elbow_button = BodyButton(label='Left Elbow', width=50, height=50)
+        self._right_elbow_button = BodyButton(label='Right Elbow', width=50, height=50)
         self._elbow_layout.addStretch()
         self._elbow_layout.addWidget(self._left_elbow_button)
         self._elbow_layout.addStretch()
@@ -111,11 +109,11 @@ class AvatarController(QWidget):
 
         # WRIST
         self._wrist_layout = QHBoxLayout()
-        self._left_wrist_button = BodyButton()
-        self._left_hip_button = BodyButton()
-        self._center_button = BodyButton()
-        self._right_hip_button = BodyButton()
-        self._right_wrist_button = BodyButton()
+        self._left_wrist_button = BodyButton(label='Left wrist')
+        self._left_hip_button = BodyButton(label='Left hip')
+        self._center_button = BodyButton(label='Center')
+        self._right_hip_button = BodyButton(label='Right hip')
+        self._right_wrist_button = BodyButton(label='Right wrist')
         self._wrist_layout.addStretch()
         self._wrist_layout.addStretch()
         self._wrist_layout.addWidget(self._left_wrist_button)
@@ -131,8 +129,8 @@ class AvatarController(QWidget):
 
         # KNEES
         self._knee_layout = QHBoxLayout()
-        self._left_knee_button = BodyButton()
-        self._right_knee_button = BodyButton()
+        self._left_knee_button = BodyButton(label='Left knee')
+        self._right_knee_button = BodyButton(label='Right knee')
         self._knee_layout.addStretch()
         self._knee_layout.addWidget(self._left_knee_button)
         self._knee_layout.addWidget(self._right_knee_button)
@@ -140,8 +138,8 @@ class AvatarController(QWidget):
 
         # ANKLES
         self._ankle_layout = QHBoxLayout()
-        self._left_ankle_button = BodyButton()
-        self._right_ankle_button = BodyButton()
+        self._left_ankle_button = BodyButton(label='Left ankle')
+        self._right_ankle_button = BodyButton(label='Right ankle')
         self._ankle_layout.addStretch()
         self._ankle_layout.addWidget(self._left_ankle_button)
         self._ankle_layout.addWidget(self._right_ankle_button)
