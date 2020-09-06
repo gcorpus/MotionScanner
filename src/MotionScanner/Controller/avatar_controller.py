@@ -1,5 +1,6 @@
 from PySide2.QtWidgets import *
 from MotionScanner.Controller import BodyButton
+from MotionScanner.Lib import MotionScannerLib
 
 
 class AvatarController(QWidget):
@@ -7,6 +8,7 @@ class AvatarController(QWidget):
     def __init__(self, parent=None):
         super(AvatarController, self).__init__(parent)
         self._setupUI()
+        self.initialize()
         self.setStyleSheet(open('D:/Greek/Documentos/GreekosoLab/MotionScanner/src/MotionScanner/Lib/stylesheet.css').read())
 
     @property
@@ -18,7 +20,7 @@ class AvatarController(QWidget):
         return self._left_shoulder_button
 
     @property
-    def RightShouler(self):
+    def RightShoulder(self):
         return self._right_shoulder_button
 
     @property
@@ -73,8 +75,20 @@ class AvatarController(QWidget):
         self._main_layout = QVBoxLayout(self)
         self._avatar_layout = QVBoxLayout()
 
+        self._joint_chunk_group = QGroupBox()
+        self._joint_chunk_group.setStyleSheet("""font-family:Helvetica;font-size:16px;""")
+        self._joint_chunk_layout = QHBoxLayout()
+        self._joint_chunk_label = QLabel('Joint chunk:')
+        self._joint_chunk_combobox = QComboBox()
+        self._joint_chunk_combobox.addItems(['None', 'Head', 'Head-Chest', 'Head-LeftArm', 'Head-RightArm',
+                                             'Head-Arms', 'Head-LeftLeg', 'Head-RightLeg', 'Head-Legs', 'Body', 'Not available'])
+        self._joint_chunk_layout.addWidget(self._joint_chunk_label)
+        self._joint_chunk_layout.addWidget(self._joint_chunk_combobox)
+        self._joint_chunk_layout.addStretch()
+        self._joint_chunk_group.setLayout(self._joint_chunk_layout)
+
         self._avatar_group = QGroupBox()
-        self.resizeWidget(self._avatar_group,300,600)
+        self.resizeWidget(self._avatar_group, 300, 600)
         self._avatar_group.setStyleSheet("""background-image: url(D:/Greek/Documentos/GreekosoLab/MotionScanner/src/MotionScanner/Lib/Images/human_figure_36.jpg)""")
 
         self._avatar_vertical_layout = QVBoxLayout()
@@ -175,9 +189,33 @@ class AvatarController(QWidget):
         self._avatar_vertical_layout.addStretch()
 
         self._avatar_group.setLayout(self._avatar_vertical_layout)
+        self._avatar_layout.addWidget(self._joint_chunk_group)
         self._avatar_layout.addWidget(self._avatar_group)
 
         self._main_layout.addLayout(self._avatar_layout)
+
+    def initialize(self):
+        self._head_button.clicked.connect(lambda: MotionScannerLib.AnalyzeJointChunk(self))
+
+        self._left_shoulder_button.clicked.connect(lambda: MotionScannerLib.AnalyzeJointChunk(self))
+        self._chest_button.clicked.connect(lambda: MotionScannerLib.AnalyzeJointChunk(self))
+        self._right_shoulder_button.clicked.connect(lambda: MotionScannerLib.AnalyzeJointChunk(self))
+
+        self._left_elbow_button.clicked.connect(lambda: MotionScannerLib.AnalyzeJointChunk(self))
+        self._right_elbow_button.clicked.connect(lambda: MotionScannerLib.AnalyzeJointChunk(self))
+
+        self._left_wrist_button.clicked.connect(lambda: MotionScannerLib.AnalyzeJointChunk(self))
+        self._right_wrist_button.clicked.connect(lambda: MotionScannerLib.AnalyzeJointChunk(self))
+
+        self._left_hip_button.clicked.connect(lambda: MotionScannerLib.AnalyzeJointChunk(self))
+        self._center_button.clicked.connect(lambda: MotionScannerLib.AnalyzeJointChunk(self))
+        self._right_hip_button.clicked.connect(lambda: MotionScannerLib.AnalyzeJointChunk(self))
+
+        self._left_knee_button.clicked.connect(lambda: MotionScannerLib.AnalyzeJointChunk(self))
+        self._right_knee_button.clicked.connect(lambda: MotionScannerLib.AnalyzeJointChunk(self))
+
+        self._left_ankle_button.clicked.connect(lambda: MotionScannerLib.AnalyzeJointChunk(self))
+        self._right_ankle_button.clicked.connect(lambda: MotionScannerLib.AnalyzeJointChunk(self))
 
     def resizeWidget(self, widget, width, height):
         widget.setMinimumSize(width, height)

@@ -183,93 +183,37 @@ class WebCamController(QWidget):
 
     def _displayColorPathVideoStream(self):
 
-        # print('COLORS RANGE:::',self._color_low, self._color_high)
-
-        # Catching current frame and your success value (boolean).
         success, frame = self._capture.read()
 
-        # If frame catching was succeed.
         if success:
 
-            # Checking alpha_screen value
-            if self._alpha_screen is None :
-                # If alpha_screen is None, create an array of zeros (alpha).
+            # MOTION-PATH ::
+            if self._alpha_screen is None:
                 self._alpha_screen = numpy.zeros(frame.shape, dtype=numpy.uint8)
 
-            # Flip frame
-            frame = cv2.flip(frame, 1)
-            # Converting original frame to HSV frame.
-            frame_HSV = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-            # Creating a mask frame with color range data given.
-            mask = cv2.inRange(frame_HSV, self._color_low, self._color_high)
-            # Exploring mask frame looking for contours of color range given.
-            contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-            # Sorting contours found.
-            contours = sorted(contours, key=cv2.contourArea, reverse=True)[:1]
+            frame, contours = MotionScannerLib.SetupFrameAndContours(frame, self._color_low, self._color_high)
 
-            # For each contour of contours found.
             for c in contours:
-                # Catching area data of contour.
-                area = cv2.contourArea(c)
 
-                # If area value is greater than 2000
-                if area > 3000:
+                self._x1, self._y1, frame = MotionScannerLib.FindCenterPointOfContour(c, frame)
 
-                    # Find center point of contour --
-                    M = cv2.moments(c)
+                frame = MotionScannerLib.RenameDetectedPoints(self._avatar_widget, frame, self._x1, self._y1)
 
-                    if (M['m00'] == 0):
-                        M['m00'] = 1
+                self._alpha_screen, self._x1, self._y1, self._x2, self._y2 = MotionScannerLib.AnalizeMeasureParameters(
+                                                                                                self._measure_widget, self._alpha_screen,
+                                                                                                self._x1, self._y1, self._x2, self._y2)
 
-                    self._x1 = int(M['m10'] / M['m00'])
-                    self._y1 = int(M['m01'] / M['m00'])
-                    # Find center point of contour --
-
-                    # Draw a circle int centre point of contour.
-                    cv2.circle(frame, (self._x1, self._y1), 7, (0, 255, 0), -1)
-                    # Define a font type.
-                    font = cv2.FONT_HERSHEY_SIMPLEX
-                    # Draw text of coordinates x,y, where centre point is.
-                    if self._avatar_widget.Head.isActived:
-                        cv2.putText(frame, '{}'.format(self._avatar_widget.Head.bodyPartName), (self._x1 + 10, self._y1), font, 0.75, (0, 255, 0), 1, cv2.LINE_AA)
-                    else:
-                        cv2.putText(frame, '{},{}'.format(self._x1, self._y1), (self._x1 + 10, self._y1), font, 0.75,(0, 255, 0), 1, cv2.LINE_AA)
-
-                    # If PATH parameter is actived.
-                    if self._measure_widget.isMotionPath:
-
-                        # Speculating.. if x1 and x2 have value.
-                        if self._x1 and self._x2:
-                            self._alpha_screen = cv2.line(self._alpha_screen, (self._x1, self._y1), (self._x2, self._y2),(91, 43, 132), 5)
-                        elif self._x1:
-                            self._alpha_screen = cv2.line(self._alpha_screen, (self._x1, self._y1), (self._x1, self._y1),(91, 43, 132), 5)
-
-                        # Set new values
-                        self._x2 = self._x1
-                        self._y2 = self._y1
-
-                    else:
-                        # Cleaning position of points.
-                        self._x1 = None
-                        self._y1 = None
-                        self._x2 = None
-                        self._y2 = None
-
-            # Merge original frame and drawn alpha frame.
-            alpha_screen_gray = cv2.cvtColor(self._alpha_screen, cv2.COLOR_BGR2GRAY)
-            _, th = cv2.threshold(alpha_screen_gray, 10, 255, cv2.THRESH_BINARY)
-            thInv = cv2.bitwise_not(th)
-            frame = cv2.bitwise_and(frame, frame, mask=thInv)
-            frame = cv2.add(frame, self._alpha_screen)
+            if self._measure_widget.isMotionPath:
+                # Merge frames
+                frame = MotionScannerLib.MergeAlphaScreenToFrame(self._alpha_screen, frame)
 
             # Invert color system of frame of BGR to RGB.
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-            # Submitting resulting frame to QImage object for convert to image.
+            # Convert frame to QImage
             image = QImage(frame, frame.shape[1], frame.shape[0],
                            frame.strides[0], QImage.Format_RGB888)
-
-            # Setting resulting current frame to final displayer.
+            # Set result frame
             self._frame_label.setPixmap(QPixmap.fromImage(image))
 
     def _cleanVideoCanvas(self):

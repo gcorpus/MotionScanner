@@ -95,7 +95,7 @@ class MotionScannerController(QWidget):
         self._data_controls_layout.addWidget(self._user_profile_widget)
         self._data_controls_layout.addWidget(self._play_scan_button)
         self._data_controls_layout.addWidget(self._stop_scan_button)
-        self._data_controls_layout.addWidget(self._test_button)
+        # self._data_controls_layout.addWidget(self._test_button)
         self._data_controls_layout.addWidget(self._avatar_widget)
         self._data_controls_layout.addStretch()
 
