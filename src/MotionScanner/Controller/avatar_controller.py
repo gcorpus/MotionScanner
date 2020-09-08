@@ -71,6 +71,10 @@ class AvatarController(QWidget):
     def RightAnkle(self):
         return self._right_ankle_button
 
+    @property
+    def JointCombobox(self):
+        return self._joint_chunk_combobox
+
     def _setupUI(self):
         self._main_layout = QVBoxLayout(self)
         self._avatar_layout = QVBoxLayout()
@@ -195,27 +199,30 @@ class AvatarController(QWidget):
         self._main_layout.addLayout(self._avatar_layout)
 
     def initialize(self):
-        self._head_button.clicked.connect(lambda: MotionScannerLib.AnalyzeJointChunk(self))
 
-        self._left_shoulder_button.clicked.connect(lambda: MotionScannerLib.AnalyzeJointChunk(self))
-        self._chest_button.clicked.connect(lambda: MotionScannerLib.AnalyzeJointChunk(self))
-        self._right_shoulder_button.clicked.connect(lambda: MotionScannerLib.AnalyzeJointChunk(self))
+        self._joint_chunk_combobox.currentIndexChanged.connect(lambda: MotionScannerLib.SetupJointChunkFromCombobox(self))
 
-        self._left_elbow_button.clicked.connect(lambda: MotionScannerLib.AnalyzeJointChunk(self))
-        self._right_elbow_button.clicked.connect(lambda: MotionScannerLib.AnalyzeJointChunk(self))
+        self._head_button.clicked.connect(lambda: MotionScannerLib.SetupJointChunkFromAvatar(self))
 
-        self._left_wrist_button.clicked.connect(lambda: MotionScannerLib.AnalyzeJointChunk(self))
-        self._right_wrist_button.clicked.connect(lambda: MotionScannerLib.AnalyzeJointChunk(self))
+        self._left_shoulder_button.clicked.connect(lambda: MotionScannerLib.SetupJointChunkFromAvatar(self))
+        self._chest_button.clicked.connect(lambda: MotionScannerLib.SetupJointChunkFromAvatar(self))
+        self._right_shoulder_button.clicked.connect(lambda: MotionScannerLib.SetupJointChunkFromAvatar(self))
 
-        self._left_hip_button.clicked.connect(lambda: MotionScannerLib.AnalyzeJointChunk(self))
-        self._center_button.clicked.connect(lambda: MotionScannerLib.AnalyzeJointChunk(self))
-        self._right_hip_button.clicked.connect(lambda: MotionScannerLib.AnalyzeJointChunk(self))
+        self._left_elbow_button.clicked.connect(lambda: MotionScannerLib.SetupJointChunkFromAvatar(self))
+        self._right_elbow_button.clicked.connect(lambda: MotionScannerLib.SetupJointChunkFromAvatar(self))
 
-        self._left_knee_button.clicked.connect(lambda: MotionScannerLib.AnalyzeJointChunk(self))
-        self._right_knee_button.clicked.connect(lambda: MotionScannerLib.AnalyzeJointChunk(self))
+        self._left_wrist_button.clicked.connect(lambda: MotionScannerLib.SetupJointChunkFromAvatar(self))
+        self._right_wrist_button.clicked.connect(lambda: MotionScannerLib.SetupJointChunkFromAvatar(self))
 
-        self._left_ankle_button.clicked.connect(lambda: MotionScannerLib.AnalyzeJointChunk(self))
-        self._right_ankle_button.clicked.connect(lambda: MotionScannerLib.AnalyzeJointChunk(self))
+        self._left_hip_button.clicked.connect(lambda: MotionScannerLib.SetupJointChunkFromAvatar(self))
+        self._center_button.clicked.connect(lambda: MotionScannerLib.SetupJointChunkFromAvatar(self))
+        self._right_hip_button.clicked.connect(lambda: MotionScannerLib.SetupJointChunkFromAvatar(self))
+
+        self._left_knee_button.clicked.connect(lambda: MotionScannerLib.SetupJointChunkFromAvatar(self))
+        self._right_knee_button.clicked.connect(lambda: MotionScannerLib.SetupJointChunkFromAvatar(self))
+
+        self._left_ankle_button.clicked.connect(lambda: MotionScannerLib.SetupJointChunkFromAvatar(self))
+        self._right_ankle_button.clicked.connect(lambda: MotionScannerLib.SetupJointChunkFromAvatar(self))
 
     def resizeWidget(self, widget, width, height):
         widget.setMinimumSize(width, height)

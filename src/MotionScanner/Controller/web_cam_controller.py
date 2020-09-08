@@ -28,6 +28,8 @@ class WebCamController(QWidget):
         self._y2 = None
         self._alpha_screen = None
 
+        self._contours_data = []
+
         self._setupUI()
         self._cleanVideoCanvas()
 
@@ -191,21 +193,28 @@ class WebCamController(QWidget):
             if self._alpha_screen is None:
                 self._alpha_screen = numpy.zeros(frame.shape, dtype=numpy.uint8)
 
-            frame, contours = MotionScannerLib.SetupFrameAndContours(frame, self._color_low, self._color_high)
+            frame, contours, contours_data = MotionScannerLib.SetupFrameAndContours(frame,
+                                                                                    self._color_low,
+                                                                                    self._color_high,
+                                                                                    self._avatar_widget)
+            frame = MotionScannerLib.RenamePoints(contours_data, frame)
 
-            for c in contours:
+            for c in contours_data:
 
-                self._x1, self._y1, frame = MotionScannerLib.FindCenterPointOfContour(c, frame)
+                # self._x1, self._y1, frame = MotionScannerLib.FindCenterPointOfContour(c, frame)
+                #
+                # frame = MotionScannerLib.RenameDetectedPoints(self._avatar_widget, frame, self._x1, self._y1)
+                if contours_data:
+                    self._x1 = c[1]
+                    self._y1 = c[2]
 
-                frame = MotionScannerLib.RenameDetectedPoints(self._avatar_widget, frame, self._x1, self._y1)
+                    self._alpha_screen, self._x1, self._y1, self._x2, self._y2 = MotionScannerLib.AnalizeMeasureParameters(
+                                                                                                    self._measure_widget, self._alpha_screen,
+                                                                                                    self._x1, self._y1, self._x2, self._y2)
 
-                self._alpha_screen, self._x1, self._y1, self._x2, self._y2 = MotionScannerLib.AnalizeMeasureParameters(
-                                                                                                self._measure_widget, self._alpha_screen,
-                                                                                                self._x1, self._y1, self._x2, self._y2)
-
-            if self._measure_widget.isMotionPath:
-                # Merge frames
-                frame = MotionScannerLib.MergeAlphaScreenToFrame(self._alpha_screen, frame)
+            # if self._measure_widget.isMotionPath:
+            # Merge frames
+            frame = MotionScannerLib.MergeAlphaScreenToFrame(self._alpha_screen, frame)
 
             # Invert color system of frame of BGR to RGB.
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
