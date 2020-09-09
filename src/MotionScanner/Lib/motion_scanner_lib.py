@@ -6,9 +6,11 @@ from PySide2.QtGui import *
 class MotionScannerLib(object):
 
     @staticmethod
-    def SetupFrameAndContours(frame, color_low, color_high, avatar_widget):
+    def SetupFrameAndContours(frame, color_low, color_high, avatar_widget, contours_data, setup_counter, prev_frame, prev_points, lk_parameters, contours_points):
 
         frame = cv2.flip(frame, 1)
+
+        # if setup_counter < 150:
 
         frame_HSV = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         mask = cv2.inRange(frame_HSV, color_low, color_high)
@@ -16,8 +18,39 @@ class MotionScannerLib(object):
         contours = sorted(contours, key=cv2.contourArea, reverse=True)
         contours = MotionScannerLib.ValidContours(contours)
         contours_data = MotionScannerLib.IdentifyBodyJoints(contours, avatar_widget)
+        frame = MotionScannerLib.RenamePoints(contours_data, frame)
 
-        return frame, contours, contours_data
+        if contours_data:
+            if contours_data[0][3]:
+                setup_counter += 1
+
+        # else:
+        #     print('READY')
+        #     # for c in contours_data:
+        #     #     print('X=', c[1], 'Y= ', c[2])
+        #     if not prev_points.any():
+        #         opticalflow_points = []
+        #         for c in contours_points:
+        #             print('Final coordinates: ', c[1], c[2])
+        #             opticalflow_points.extend(c[1])
+        #
+        #         print('Optical flow points: ', opticalflow_points)
+        #
+        #         prev_points = numpy.array(opticalflow_points, dtype=numpy.float32)
+        #
+        #
+        #
+        #     current_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        #     current_points, status, error = cv2.calcOpticalFlowPyrLK(prev_frame, current_frame, prev_points, None, **lk_parameters)
+        #     prev_frame = current_frame.copy()
+        #     prev_points = current_points
+        #
+        #     for p in current_points:
+        #         x = p[0]
+        #         y = p[1]
+        #         cv2.circle(frame, (x, y), 7, (0, 255, 0), -1)
+
+        return frame, contours_data, setup_counter, prev_frame, prev_points
 
     @staticmethod
     def ValidContours(contours):
@@ -37,16 +70,17 @@ class MotionScannerLib(object):
 
         contours_data = MotionScannerLib.FindCenterPointAndPositionOfContour(contours)
 
-        # HEAD chunk
+        # Head chunk
         if avatar_widget.JointCombobox.currentIndex() == 1:
             if len(contours_data) == 1:
                 contours_data[0][3] = 'Head'
 
-        # Head-Chest
+        # Head-Chest chunk
         elif avatar_widget.JointCombobox.currentIndex() == 2:
             if len(contours) == 4:
                 contours_data = MotionScannerLib.AnalyzePointsData(2, contours_data)
 
+        # Head_LeftArm chunk
         elif avatar_widget.JointCombobox.currentIndex() == 3:
             if len(contours) == 5:
                 contours_data = MotionScannerLib.AnalyzePointsData(3, contours_data)
@@ -84,7 +118,7 @@ class MotionScannerLib(object):
             y = c[2]
 
             cv2.circle(frame, (x, y), 7, (0, 255, 0), -1)
-            cv2.putText(frame, '{}'.format(c[3]), (x + 10, y), font, 0.75, (0, 255, 0), 1, cv2.LINE_AA)
+            cv2.putText(frame, '{}'.format(c[3]), (x + 10, y), font, 0.75, (0, 0, 0), 1, cv2.LINE_AA)
 
         return frame
 
@@ -92,11 +126,10 @@ class MotionScannerLib(object):
     def AnalyzePointsData(index, contours_data):
 
         print ('Index', index)
+        x_array = []
+        y_array = []
 
         if index == 2:
-
-            x_array = []
-            y_array = []
 
             for c in contours_data:
                 x_array.append(c[1])
@@ -120,43 +153,55 @@ class MotionScannerLib(object):
                     c[3] = 'Chest'
 
         elif index == 3:
-            c_xy = []
+
+            joints = []
 
             for c in contours_data:
-                c_xy.append([c[1],c[2]])
+                joints.append([c[1], c[2]])
 
-            c_xy.sort()
-            group_1 = c_xy[-2:] # head and chest
-            group_2 = c_xy[:3] # arm
+            joints.sort()
 
-            group_2_ = []
-            for g in group_2:
-                group_2_.append(g[1])
+            joints_head = joints[-2:]
+            joints_arm = joints[:3]
 
-            group_2 = group_2_
+            data = []
+
+            for j in joints_head:
+                y_array.append(j[1])
+
+            y_less = min(y_array)
+
+            for j in joints_head:
+                if j[1] == y_less:
+                    data.append([j[0], j[1], 'Head'])
+                else:
+                    data.append([j[0], j[1], 'Chest'])
+
+            for j in joints_arm:
+                x_array.append(j[0])
+
+            x_less = min(x_array)
+            x_greater = max(x_array)
+
+            for j in joints_arm:
+                if j[0] == x_less:
+                    data.append([j[0], j[1], 'Left wrist'])
+                elif j[0] == x_greater:
+                    data.append([j[0], j[1], 'Left shoulder'])
+                else:
+                    data.append([j[0], j[1], 'Left elbow'])
 
             for c in contours_data:
-                if c[1] == group_1[0][0]:
-                    c[3] = 'Chest'
-                elif c[1] == group_1[1][0]:
-                    c[3] = 'Head'
-
-            for c in contours_data:
-                if c[2] == group_2[0]:
-                    c[3] = 'Left wrist'
-                elif c[2] == group_2[1]:
-                    c[3] = 'Left elbow'
-                elif c[2] == group_2[2]:
-                    c[3] = 'Left shoulder'
-
-
-
-            print(c_xy)
-            print(group_1)
-            print(group_2)
-            print('---------')
-
-
+                if c[1] == data[0][0] and c[2] == data[0][1]:
+                    c[3] = data[0][2]
+                elif c[1] == data[1][0] and c[2] == data[1][1]:
+                    c[3] = data[1][2]
+                elif c[1] == data[2][0] and c[2] == data[2][1]:
+                    c[3] = data[2][2]
+                elif c[1] == data[3][0] and c[2] == data[3][1]:
+                    c[3] = data[3][2]
+                elif c[1] == data[4][0] and c[2] == data[4][1]:
+                    c[3] = data[4][2]
 
         return contours_data
 

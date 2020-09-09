@@ -28,7 +28,16 @@ class WebCamController(QWidget):
         self._y2 = None
         self._alpha_screen = None
 
+        # Setup points for opticalflow
+        self._setup_counter = 0
         self._contours_data = []
+        self._contours_points = []
+
+        self._prev_frame = None
+        self._prev_points = numpy.array([[]])
+        self._lk_parameters = dict(winSize=(20, 20),
+                                   maxLevel=4,
+                                   criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
 
         self._setupUI()
         self._cleanVideoCanvas()
@@ -193,18 +202,32 @@ class WebCamController(QWidget):
             if self._alpha_screen is None:
                 self._alpha_screen = numpy.zeros(frame.shape, dtype=numpy.uint8)
 
-            frame, contours, contours_data = MotionScannerLib.SetupFrameAndContours(frame,
-                                                                                    self._color_low,
-                                                                                    self._color_high,
-                                                                                    self._avatar_widget)
-            frame = MotionScannerLib.RenamePoints(contours_data, frame)
+            # if self._setup_counter == 150 and not self._contours_points:
+            #     self._prev_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            #     for c in self._contours_data:
+            #         self._contours_points.append(
+            #             [c, [[c[1], c[2]], [c[1]-15, c[2]], [c[1]+15, c[2]], [c[1], c[2]-15], [c[1], c[2]+15]], c[3]]
+            #         )
 
-            for c in contours_data:
+            frame, self._contours_data, self._setup_counter, self._prev_frame, self._prev_points = MotionScannerLib.SetupFrameAndContours(frame,
+                                                                                               self._color_low,
+                                                                                               self._color_high,
+                                                                                               self._avatar_widget,
+                                                                                               self._contours_data,
+                                                                                               self._setup_counter,
+                                                                                               self._prev_frame,
+                                                                                               self._prev_points,
+                                                                                               self._lk_parameters,
+                                                                                               self._contours_points)
+            # if self._setup_counter < 3:
+            #     if contours_data[0][3]:
+            #         self._setup_counter += 1
+            #
+            # frame = MotionScannerLib.RenamePoints(contours_data, frame)
 
-                # self._x1, self._y1, frame = MotionScannerLib.FindCenterPointOfContour(c, frame)
-                #
-                # frame = MotionScannerLib.RenameDetectedPoints(self._avatar_widget, frame, self._x1, self._y1)
-                if contours_data:
+            for c in self._contours_data:
+
+                if self._contours_data:
                     self._x1 = c[1]
                     self._y1 = c[2]
 
@@ -238,6 +261,12 @@ class WebCamController(QWidget):
     def stopVideoStream(self):
 
         if self._capture:
+            self._setup_counter = 0
+            self._prev_frame = None
+            self._prev_points = numpy.array([[]])
+            self._contours_data = []
+            self._contours_points = []
+
             self._capture.release()
             self._cleanVideoCanvas()
 
