@@ -1,12 +1,6 @@
 from PySide2.QtWidgets import *
-from PySide2.QtGui import *
-from PySide2.QtCore import *
-import cv2
-import numpy
 from MotionScanner.Controller import WebCamController
 from MotionScanner.Controller import SliderControlWidget
-# from web_cam_controller import WebCamController
-# from slider_control_widget import SliderControlWidget
 
 
 class ColorSetterController(QDialog):

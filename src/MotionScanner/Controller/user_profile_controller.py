@@ -1,6 +1,6 @@
 from PySide2.QtWidgets import *
 from PySide2.QtGui import *
-from MotionScanner.Controller import DataWidget
+from MotionScanner.Lib.Widgets import DataLabel
 import imutils
 import cv2
 
@@ -33,9 +33,9 @@ class UserProfileController(QWidget):
 
         self._image_data_layout.addWidget(self._profile_image)
 
-        self._user_data = DataWidget(name='Username', data=self._username)
-        self._height_data = DataWidget(name='Height', data=self._height)
-        self._weight_data = DataWidget(name='Weight', data=self._weight)
+        self._user_data = DataLabel(name='Username', data=self._username)
+        self._height_data = DataLabel(name='Height', data=self._height)
+        self._weight_data = DataLabel(name='Weight', data=self._weight)
 
         self._data_one_group = QGroupBox()
         self._data_one_layout = QVBoxLayout()
@@ -46,9 +46,9 @@ class UserProfileController(QWidget):
 
         self._image_data_layout.addWidget(self._data_one_group)
 
-        self._role_data = DataWidget(name='Role', data=self._roles)
-        self._discipline_data = DataWidget(name='Disciplines', data=self._disciplines)
-        self._routine_data = DataWidget(name='Routines', data=self._routines)
+        self._role_data = DataLabel(name='Role', data=self._roles)
+        self._discipline_data = DataLabel(name='Disciplines', data=self._disciplines)
+        self._routine_data = DataLabel(name='Routines', data=self._routines)
 
         self._data_second_group = QGroupBox()
         self._data_second_layout = QVBoxLayout()

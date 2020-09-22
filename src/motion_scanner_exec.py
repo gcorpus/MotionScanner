@@ -3,6 +3,7 @@ from PySide2.QtWidgets import *
 from MotionScanner.Controller.motion_scanner_controller import MotionScannerController
 
 if __name__ == '__main__':
+    print('Enter to app')
     # Create the Qt Application
     app = QApplication(sys.argv)
     # Create babel

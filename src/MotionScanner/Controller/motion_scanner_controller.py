@@ -1,6 +1,7 @@
 from PySide2.QtWidgets import *
 from MotionScanner.Controller import AvatarController, UserProfileController, WebCamController, MeasurementMenuController, \
-    ColorSetterController
+    ColorSetterController, PlaybackButton, DBController
+from MotionScanner.Lib.Entities import User
 
 
 class MotionScannerController(QWidget):
@@ -32,6 +33,10 @@ class MotionScannerController(QWidget):
         settings_menu = menu_bar.addMenu('Settings')
         help_menu = menu_bar.addMenu('Help')
 
+        action_database = QAction('Database', self)
+        action_database.setShortcut('Ctrl+D')
+        action_database.triggered.connect(self._callUIDatabase)
+
         action_markers = QAction('Color setter', self)
         action_markers.setShortcut('Ctrl+T')
         action_markers.triggered.connect(self._callColorSetter)
@@ -48,6 +53,7 @@ class MotionScannerController(QWidget):
         action_about.setShortcut('Ctrl+A')
         action_about.triggered.connect(self._callAbout)
 
+        settings_menu.addAction(action_database)
         settings_menu.addAction(action_markers)
         settings_menu.addAction(action_exit)
 
@@ -80,22 +86,18 @@ class MotionScannerController(QWidget):
             user={'_id': '2323943', 'name': 'Greek', 'heigth': '1.61 m', 'weight': '61 kg',
                   'roles': ['Dancer, Coach'], 'disciplines': ['Ballet', 'Fitness'], 'routines': ['Swan']})
 
+        self._controls_group = QGroupBox('Controls')
+        self._controls_layout = QHBoxLayout()
+        self._play_button = PlaybackButton('play')
+        self._stop_button = PlaybackButton('stop')
+        self._controls_layout.addWidget(self._play_button)
+        self._controls_layout.addWidget(self._stop_button)
+        self._controls_group.setLayout(self._controls_layout)
+
         self._avatar_widget = AvatarController()
 
-        self._play_scan_button = QPushButton('Scanning')
-        self._play_scan_button.setStyleSheet("""font-family:Helvetica;font-size:16px;""")
-        self._play_scan_button.setMinimumHeight(40)
-
-        self._stop_scan_button = QPushButton('Stop scan')
-        self._stop_scan_button.setStyleSheet("""font-family:Helvetica;font-size:16px;""")
-        self._stop_scan_button.setMinimumHeight(40)
-
-        self._test_button = QPushButton('TEST')
-
         self._data_controls_layout.addWidget(self._user_profile_widget)
-        self._data_controls_layout.addWidget(self._play_scan_button)
-        self._data_controls_layout.addWidget(self._stop_scan_button)
-        # self._data_controls_layout.addWidget(self._test_button)
+        self._data_controls_layout.addWidget(self._controls_group)
         self._data_controls_layout.addWidget(self._avatar_widget)
         self._data_controls_layout.addStretch()
 
@@ -105,22 +107,21 @@ class MotionScannerController(QWidget):
         self._main_layout.addLayout(self._content_layout)
 
     def initialize(self):
-
-        self._play_scan_button.clicked.connect(self._startVideoScanner)
-        self._stop_scan_button.clicked.connect(lambda: self._real_time_scanner_widget.stopVideoStream())
-        
-        self._test_button.clicked.connect(self._test)
+        self._play_button.setFunction(self._startVideoScanner)
+        self._stop_button.setFunction(self._stopVideoScanner)
 
     def _startVideoScanner(self):
-
         self._real_time_scanner_widget.ColorLow = self._color_low
         self._real_time_scanner_widget.ColorHigh = self._color_high
         self._real_time_scanner_widget.MeasureWidget = self._measurement_widget
         self._real_time_scanner_widget.AvatarWidget = self._avatar_widget
         self._real_time_scanner_widget.startVideoScanner()
 
-    def _callColorSetter(self):
+    def _stopVideoScanner(self):
         self._real_time_scanner_widget.stopVideoStream()
+
+    def _callColorSetter(self):
+        self._stopVideoScanner()
         _dialog = ColorSetterController(motion_scanner_controller=self)
         _dialog.Show()
 
@@ -132,15 +133,10 @@ class MotionScannerController(QWidget):
 
     def _callAbout(self):
         pass
-    
-    def _test(self):
-        print(self._avatar_widget.Head.isActived)
-        print(self._avatar_widget.LeftShoulder.isActived)
-        print(self._avatar_widget.Chest.isActived)
-        print(self._avatar_widget.RightShouler.isActived)
 
-        print(self._measurement_widget.isLength)
-        print(self._measurement_widget.isSpeed)
+    def _callUIDatabase(self):
+        _dialog = DBController()
+        _dialog.Show()
 
 
 if __name__ == '__main__':
